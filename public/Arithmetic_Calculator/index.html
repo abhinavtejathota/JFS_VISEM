@@ -1,63 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Course Registration Form</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Arithmetic Calculator</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
 <div class="container">
-    <h2>Course Registration Form</h2>
+    <h2>Calculator</h2>
 
-    <form id="regForm">
-
-        <label>Student Name:</label>
-        <input type="text" id="name" placeholder="Enter your name" required>
-
-        <label>Select Subjects:</label>
-
-        <div class="subject-list">
-
-            <label>
-                <input type="checkbox" class="subject" value="1000">
-                Data Structures (₹1000)
-            </label>
-
-            <label>
-                <input type="checkbox" class="subject" value="1200">
-                Operating Systems (₹1200)
-            </label>
-
-            <label>
-                <input type="checkbox" class="subject" value="1500">
-                DBMS (₹1500)
-            </label>
-
-            <label>
-                <input type="checkbox" class="subject" value="1800">
-                Computer Networks (₹1800)
-            </label>
-
-            <label>
-                <input type="checkbox" class="subject" value="2000">
-                Java Programming (₹2000)
-            </label>
-
-        </div>
-
-        <div class="total-box">
-            Total Registration Fee:  
-            <span id="total">₹0</span>
-        </div>
-
-        <button type="submit">Submit Registration</button>
-    </form>
-	
-	
+    N1: <input type="text" id="n1">
+	N2: <input type="text" id="n2">
+	Choice: <select id="op_choice">
+		<option>Addition</option>
+		<option>Subtraction</option>
+		<option>Multiplication</option>
+		<option>Division</option>
+	</select>
+	Result: <input type="text" id="result">
+	<button id="calc" onclick="calc()">Calculate</button>
 </div>
 
-
-<script src="js/course_reg.js"></script>
+<script src="js/calculator.js"></script>
 
 </body>
 </html>

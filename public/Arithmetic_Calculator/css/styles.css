@@ -20,45 +20,47 @@ h2 {
 }
 
 input[type="text"] {
-    width: 95%;
+    width: 85%;
     padding: 8px;
     margin: 8px 0 15px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
+	color: #333;
 }
 
-.subject-list label {
-    display: block;
-    padding: 6px 0;
-    cursor: pointer;
-}
-
-.total-box {
-    background: #e8f0ff;
-    padding: 10px;
-    font-size: 18px;
-    margin: 15px 0;
+#op_choice {
+	width: 82.3%;
+	padding: 8px;
+	font-size:15px;
+    margin: 8px 0 15px 0;
+    border: 1px solid #ccc;
     border-radius: 5px;
+	color: #333;
 }
 
-button {
+#result {
+	width: 79.3%; !important
+    padding: 8px;
+    margin: 8px 0 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+	color: #333;
+}
+
+#calc {
     width: 100%;
     padding: 10px;
     font-size: 16px;
-    background: #0073ff;
+    background: #FF0000;
     border: none;
     color: white;
     border-radius: 5px;
     cursor: pointer;
+	margin-bottom:10px;
+	color: #333;
 }
 
-button:hover {
-    background: #005fcc;
-}
-#result {
-    background-color: pink;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 20px;
-    font-size: 16px;
+#calc:hover {
+    background: #8B0000;
+	color: white;
 }
