@@ -47,5 +47,6 @@ document.getElementById("regForm").addEventListener("submit", function(e){
         "Total Fee: ₹" + totalFee;
 		
 		
-    alert(message);
+    document.getElementById("show").innerHTML=message.replace(/\n/g, "<br>");
+	document.getElementById("show").classList.add("show-border");
 });
