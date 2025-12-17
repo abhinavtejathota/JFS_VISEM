@@ -3,27 +3,102 @@
 <head>
     <title>Batch-wise Timetable</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    	<style>
+    	body {
+        	font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+        	background: #f4f6f8;
+        	padding: 20px;
+        	color: #333;
+    	}
 
-    <style>
-        table {
-            width: 80%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background: lightblue;
-        }
-        .batch-title {
-            font-weight: bold;
-            font-size: 20px;
-            margin-top: 30px;
-        }
-    </style>
+    	h2 {
+        	margin-bottom: 10px;
+   		}
+
+    	input[type="file"] {
+        	margin-bottom: 20px;
+        	padding: 6px;
+    	}
+
+    	#tables > div {
+        	background: #ffffff;
+        	padding: 20px;
+        	border-radius: 10px;
+        	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        	max-width: 1000px;
+        	margin: 0 auto 40px;
+    	}
+
+    	.batch-title {
+        	font-weight: 600;
+        	font-size: 22px;
+        	margin-bottom: 12px;
+        	color: #0b5394;
+    	}
+
+    	button {
+        	background: #0b5394;
+        	color: white;
+        	border: none;
+        	padding: 8px 14px;
+        	border-radius: 6px;
+        	cursor: pointer;
+        	font-size: 14px;
+        	margin-bottom: 15px;
+        	transition: background 0.2s ease;
+    	}
+
+    	button:hover {
+        	background: #083763;
+    	}
+
+    	table {
+        	width: 100%;
+        	border-collapse: collapse;
+        	table-layout: fixed;
+    	}
+
+    	th, td {
+        	border: 1px solid #ccc;
+        	padding: 10px;
+        	text-align: center;
+        	vertical-align: middle;
+        	font-size: 14px;
+        	word-wrap: break-word;
+    	}
+
+    	th {
+        	background: #e7f1ff;
+        	font-weight: 600;
+    	}
+
+    	td {
+        	background: #fafafa;
+    	}
+
+    	tr:hover td {
+        	background: #f1f7ff;
+    	}
+
+    	th[rowspan] {
+        	background: #ffe599;
+        	font-weight: bold;
+        	letter-spacing: 2px;
+    	}
+
+    	@media print {
+        	body {
+            	background: white;
+        	}
+        	button, input {
+            	display: none;
+        	}
+        	#tables > div {
+            	box-shadow: none;
+            	border: none;
+        	}
+    	}
+	</style>
 </head>
 <body>
 
