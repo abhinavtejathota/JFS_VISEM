@@ -163,11 +163,11 @@ function buildTables(timetable, batchFaculty) {
     container.innerHTML = "";
 
     const empId = document.getElementById("empId").value.trim();
+    const facultyInput = empId.toUpperCase();
     const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
     for (const batch in timetable) {
-
-        if (empId && !Array.from(batchFaculty[batch]).some(f => f.includes(empId))) {
+        if (facultyInput && !batchFaculty[batch].has(facultyInput)) {
             continue;
         }
 
@@ -200,7 +200,6 @@ function buildTables(timetable, batchFaculty) {
         });
 
         table.innerHTML = html;
-
         wrapper.append(title, btn, table);
         container.appendChild(wrapper);
     }
