@@ -105,7 +105,7 @@
 <h2>Upload CSV File</h2>
 <input type="file" id="csvFile" accept=".csv">
 <label>
-    Employee ID:
+    Employee:
     <input type="text" id="empId" placeholder="Enter Employee ID">
 </label>
 
@@ -137,7 +137,7 @@ function processCSV(data) {
         const session = row["SESSION"];
         const course = row["COURSE"];
         const room = row["ROOM"];
-        const faculty = row["FACULTY"];
+        const faculty = row["FACULTY"]?.trim().toUpperCase();
 
         if (!batch || !day || !session) return;
 
@@ -163,7 +163,7 @@ function buildTables(timetable, batchFaculty) {
     container.innerHTML = "";
 
     const empId = document.getElementById("empId").value.trim();
-    const facultyInput = empId.toUpperCase();
+    const facultyInput = empId.trim().toUpperCase();
     const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
     for (const batch in timetable) {
