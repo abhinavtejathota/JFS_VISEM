@@ -1,244 +1,190 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Batch-wise Timetable</title>
+    <title>Faculty Timetable Viewer</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    	<style>
-    	body {
-        	font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-        	background: #f4f6f8;
-        	padding: 20px;
-        	color: #333;
-    	}
 
-    	h2 {
-        	margin-bottom: 10px;
-   		}
-
-    	input[type="file"] {
-        	margin-bottom: 20px;
-        	padding: 6px;
-    	}
-
-		.patro {
-    		background-color: #ffe599 !important;
-    		font-weight: 600;
+    <style>
+		body {
+			font-family: Arial, sans-serif;
+			background: #f9f9f9;
+			color: #333;
+			padding: 15px;
 		}
-			
-    	#tables > div {
-        	background: #ffffff;
-        	padding: 20px;
-        	border-radius: 10px;
-        	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-        	max-width: 1000px;
-        	margin: 0 auto 40px;
-    	}
-
-    	.batch-title {
-        	font-weight: 600;
-        	font-size: 22px;
-        	margin-bottom: 12px;
-        	color: #0b5394;
-    	}
-
-    	button {
-        	background: #0b5394;
-        	color: white;
-        	border: none;
-        	padding: 8px 14px;
-        	border-radius: 6px;
-        	cursor: pointer;
-        	font-size: 14px;
-        	margin-bottom: 15px;
-        	transition: background 0.2s ease;
-    	}
-
-    	button:hover {
-        	background: #083763;
-    	}
-
-    	table {
-        	width: 100%;
-        	border-collapse: collapse;
-        	table-layout: fixed;
-    	}
-
-    	th, td {
-        	border: 1px solid #ccc;
-        	padding: 10px;
-        	text-align: center;
-        	vertical-align: middle;
-        	font-size: 14px;
-        	word-wrap: break-word;
-    	}
-
-    	th {
-        	background: #e7f1ff;
-        	font-weight: 600;
-    	}
-
-    	td {
-        	background: #fafafa;
-    	}
-
-    	tr:hover td {
-        	background: #f1f7ff;
-    	}
-
-    	th[rowspan] {
-        	background: #ffe599;
-        	font-weight: bold;
-        	letter-spacing: 2px;
-    	}
-
-    	@media print {
-        	body {
-            	background: white;
-        	}
-        	button, input {
-            	display: none;
-        	}
-        	#tables > div {
-            	box-shadow: none;
-            	border: none;
-        	}
-    	}
-	</style>
+		h2 {
+			color: #2c3e50;
+		}
+		table {
+			width: 80%;
+			border-collapse: collapse;
+			margin: 20px 0;
+			background: #fff;
+		}
+		th, td {
+			border: 1px solid #aaa;
+			padding: 8px 10px;
+			text-align: center;
+		}
+		th {
+			background: #add8e6; /* light blue */
+			font-weight: bold;
+		}
+		td:first-child {
+			font-weight: bold;
+			background: #f2f2f2;
+		}
+		.title {
+			font-weight: bold;
+			font-size: 20px;
+			margin-top: 30px;
+		}
+		.highlight-su {
+			background-color: #fff3a0; /* soft yellow */
+			font-weight: bold;
+		}
+		select, input[type="text"], input[type="file"] {
+			padding: 6px 8px;
+			margin-right: 10px;
+			margin-top: 10px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+		
+    </style>
 </head>
+
 <body>
 
-<h2>Upload CSV File</h2>
-<input type="file" id="csvFile" accept=".csv">
-<label>
-    Employee:
-    <input type="text" id="empId" placeholder="Enter Employee">
-</label>
+<h2>Faculty Timetable</h2>
 
+<input type="file" id="csvFile" accept=".csv">
+
+<br><br>
+
+<input type="text" id="facultySearch" placeholder="Search faculty...">
+<select id="facultySelect">
+    <option value="">Select Faculty</option>
+</select>
 
 <div id="tables"></div>
 
 <script>
+let facultyTT = {};
+
 document.getElementById("csvFile").addEventListener("change", function () {
     Papa.parse(this.files[0], {
         header: true,
         skipEmptyLines: true,
         complete: function (result) {
-            processCSV(result.data);
+            facultyTT = buildFacultyData(result.data);
+            populateFacultyDropdown(facultyTT);
         }
     });
 });
 
-document.getElementById("empId").addEventListener("input", () => {
-    document.getElementById("csvFile").dispatchEvent(new Event("change"));
-});
-	
-function processCSV(data) {
-    const timetable = {};
-    const batchFaculty = {}; 
+function buildFacultyData(data) {
+    const tt = {};
 
     data.forEach(row => {
-        const batch = row["BATCH"];
+        const faculty = row["FACULTY"];
         const day = row["DAY"];
-        const session = row["SESSION"];
+        const session = row["SESSION"]; 
+        const batch = row["BATCH"];
         const course = row["COURSE"];
         const room = row["ROOM"];
-        const faculty = row["FACULTY"]?.trim().toUpperCase();
 
-        if (!batch || !day || !session) return;
+        if (!faculty || !day || !session) return;
 
-        if (!timetable[batch]) {
-            timetable[batch] = {};
-            batchFaculty[batch] = new Set(); 
+        if (!tt[faculty]) {
+            tt[faculty] = {};
         }
 
-        batchFaculty[batch].add(faculty); 
-
-        if (!timetable[batch][day]) {
-            timetable[batch][day] = { FN: "", AN: "" };
+        if (!tt[faculty][day]) {
+            tt[faculty][day] = { FN: "", AN: "" };
         }
-		const facultyClass = faculty === "PATRO" ? "patro" : "";
-        timetable[batch][day][session] =
-    		`<div class="${facultyClass}">
-        		${course}<br>
-        		Room: ${room}<br>
-        		Faculty: ${faculty}
-     		</div>`;
+
+        let content =
+			batch + "<br>" +
+			course + "<br>" +
+				"Room: " + room;
+
+		if (batch.toUpperCase().includes("VI-SU-B2")) {
+			content = `<div class="highlight-su">${content}</div>`;
+		}
+		tt[faculty][day][session] = content;
     });
 
-    buildTables(timetable, batchFaculty);
+    return tt;
 }
-function buildTables(timetable, batchFaculty) {
+
+function populateFacultyDropdown(tt) {
+    const select = document.getElementById("facultySelect");
+    select.innerHTML = '<option value="">Select Faculty</option>';
+
+    Object.keys(tt).sort().forEach(faculty => {
+        const opt = document.createElement("option");
+        opt.value = faculty;
+        opt.textContent = faculty;
+        select.appendChild(opt);
+    });
+}
+
+document.getElementById("facultySearch").addEventListener("input", function () {
+    const query = this.value.toLowerCase();
+    const select = document.getElementById("facultySelect");
+
+    Array.from(select.options).forEach(opt => {
+        if (!opt.value) return;
+        opt.style.display = opt.value.toLowerCase().includes(query) ? "" : "none";
+    });
+});
+
+document.getElementById("facultySelect").addEventListener("change", function () {
+    const faculty = this.value;
+    if (!faculty) return;
+    buildFacultyTable(faculty);
+});
+
+function buildFacultyTable(faculty) {
+
     const container = document.getElementById("tables");
     container.innerHTML = "";
 
-    const empId = document.getElementById("empId").value.trim();
-    const facultyInput = empId.trim().toUpperCase();
     const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    const data = facultyTT[faculty];
 
-    for (const batch in timetable) {
-        if (facultyInput && !batchFaculty[batch].has(facultyInput)) {
-            continue;
-        }
+    const title = document.createElement("div");
+    title.className = "title";
+    title.innerHTML = "Faculty: " + faculty;
 
-        const wrapper = document.createElement("div");
+    const table = document.createElement("table");
 
-        const title = document.createElement("div");
-        title.className = "batch-title";
-        title.innerHTML = `Batch: ${batch}`;
+    let html =
+        "<tr>" +
+        "<th>DAY</th>" +
+        "<th>FN</th>" +
+        "<th rowspan='7'>L<br>U<br>N<br>C<br>H</th>" +
+        "<th>AN</th>" +
+        "</tr>";
 
-        const btn = document.createElement("button");
-        btn.innerHTML = "Print This Timetable";
-        btn.onclick = () => printTable(batch);
+    days.forEach(day => {
+        const fn = data[day]?.FN || "";
+        const an = data[day]?.AN || "";
 
-        const table = document.createElement("table");
-        table.id = `table_${batch}`;
+        html +=
+            "<tr>" +
+            "<td>" + day + "</td>" +
+            "<td>" + fn + "</td>" +
+            "<td>" + an + "</td>" +
+            "</tr>";
+    });
 
-        let html =
-            "<tr><th>DAY</th><th>FN</th><th rowspan='7'>L<br>U<br>N<br>C<br>H</th><th>AN</th></tr>";
+    table.innerHTML = html;
 
-        days.forEach(day => {
-            const fn = timetable[batch][day]?.FN || "";
-            const an = timetable[batch][day]?.AN || "";
-            html += `
-                <tr>
-                    <td>${day}</td>
-                    <td>${fn}</td>
-                    <td>${an}</td>
-                </tr>
-            `;
-        });
-
-        table.innerHTML = html;
-        wrapper.append(title, btn, table);
-        container.appendChild(wrapper);
-    }
-}
-
-function printTable(batch) {
-    const tableHTML = document.getElementById(`table_${batch}`).outerHTML;
-    const title = `<h2>Batch: ${batch}</h2>`;
-
-    const printWindow = window.open("", "", "width=900,height=600");
-    printWindow.document.write(`
-        <html>
-        <head>
-            <title>Print</title>
-            <style>
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid black; padding: 8px; text-align: center; }
-                th { background: lightblue; }
-            </style>
-        </head>
-        <body>
-            ${title}
-            ${tableHTML}
-        </body>
-        </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.print();
+    container.appendChild(title);
+    container.appendChild(table);
 }
 </script>
+
 </body>
 </html>
