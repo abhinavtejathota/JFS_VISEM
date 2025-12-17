@@ -104,6 +104,11 @@
 
 <h2>Upload CSV File</h2>
 <input type="file" id="csvFile" accept=".csv">
+<label>
+    Employee ID:
+    <input type="text" id="empId" placeholder="Enter Employee ID">
+</label>
+
 
 <div id="tables"></div>
 
@@ -118,8 +123,13 @@ document.getElementById("csvFile").addEventListener("change", function () {
     });
 });
 
+document.getElementById("empId").addEventListener("input", () => {
+    document.getElementById("csvFile").dispatchEvent(new Event("change"));
+});
+	
 function processCSV(data) {
     const timetable = {};
+    const batchFaculty = {}; 
 
     data.forEach(row => {
         const batch = row["BATCH"];
@@ -127,32 +137,41 @@ function processCSV(data) {
         const session = row["SESSION"];
         const course = row["COURSE"];
         const room = row["ROOM"];
-		const faculty = row["FACULTY"];
+        const faculty = row["FACULTY"];
 
         if (!batch || !day || !session) return;
 
         if (!timetable[batch]) {
             timetable[batch] = {};
+            batchFaculty[batch] = new Set(); 
         }
+
+        batchFaculty[batch].add(faculty); 
+
         if (!timetable[batch][day]) {
             timetable[batch][day] = { FN: "", AN: "" };
         }
 
-        timetable[batch][day][session] = `${course}<br>Room: ${room}<br>Faculty:${faculty}`;
+        timetable[batch][day][session] =
+            `${course}<br>Room: ${room}<br>Faculty: ${faculty}`;
     });
 
-    buildTables(timetable);
+    buildTables(timetable, batchFaculty);
 }
-function buildTables(timetable) {
+function buildTables(timetable, batchFaculty) {
     const container = document.getElementById("tables");
     container.innerHTML = "";
 
+    const empId = document.getElementById("empId").value.trim();
     const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
     for (const batch in timetable) {
 
+        if (empId && !Array.from(batchFaculty[batch]).some(f => f.includes(empId))) {
+            continue;
+        }
+
         const wrapper = document.createElement("div");
-        wrapper.style.marginBottom = "40px";
 
         const title = document.createElement("div");
         title.className = "batch-title";
@@ -160,15 +179,14 @@ function buildTables(timetable) {
 
         const btn = document.createElement("button");
         btn.innerHTML = "Print This Timetable";
-        btn.style.marginBottom = "10px";
-        btn.onclick = function () {
-            printTable(batch);
-        };
+        btn.onclick = () => printTable(batch);
 
         const table = document.createElement("table");
         table.id = `table_${batch}`;
 
-        let html = "<tr><th>DAY</th><th>FN</th><th rowspan=7>L<br>U<br>N<br>C<br>H</th><th>AN</th></tr>";
+        let html =
+            "<tr><th>DAY</th><th>FN</th><th rowspan='7'>L<br>U<br>N<br>C<br>H</th><th>AN</th></tr>";
+
         days.forEach(day => {
             const fn = timetable[batch][day]?.FN || "";
             const an = timetable[batch][day]?.AN || "";
@@ -183,10 +201,7 @@ function buildTables(timetable) {
 
         table.innerHTML = html;
 
-        wrapper.appendChild(title);
-        wrapper.appendChild(btn);
-        wrapper.appendChild(table);
-
+        wrapper.append(title, btn, table);
         container.appendChild(wrapper);
     }
 }
@@ -217,6 +232,5 @@ function printTable(batch) {
     printWindow.print();
 }
 </script>
-
 </body>
 </html>
