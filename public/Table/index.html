@@ -20,6 +20,11 @@
         	padding: 6px;
     	}
 
+		.patro {
+    		background-color: #ffe599 !important;
+    		font-weight: 600;
+		}
+			
     	#tables > div {
         	background: #ffffff;
         	padding: 20px;
@@ -151,9 +156,13 @@ function processCSV(data) {
         if (!timetable[batch][day]) {
             timetable[batch][day] = { FN: "", AN: "" };
         }
-
+		const facultyClass = faculty === "PATRO" ? "patro" : "";
         timetable[batch][day][session] =
-            `${course}<br>Room: ${room}<br>Faculty: ${faculty}`;
+    		`<div class="${facultyClass}">
+        		${course}<br>
+        		Room: ${room}<br>
+        		Faculty: ${faculty}
+     		</div>`;
     });
 
     buildTables(timetable, batchFaculty);
