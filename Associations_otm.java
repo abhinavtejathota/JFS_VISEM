@@ -31,10 +31,17 @@ class Main {
         Department dept = new Department(101, "CSE", empList);
         System.out.println("Department:"+dept.deptName);
         float total = 0;
+        float max = 0;
+        String who = "";
         for(Employee e : dept.emplst) {
             System.out.println(e.id+" "+e.name+" "+e.salary);
             total += e.salary;
+            if(max < e.salary) {
+                max = e.salary; 
+                who = e.name;
+            }
         }
-        System.out.println("avg salary: "+total/dept.emplst.size());
+        System.out.println("avg salary: "+ total/dept.emplst.size());
+        System.out.println("Highest salary: "+max+" - Person: "+who);
     }
 }
