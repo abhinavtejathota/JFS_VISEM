@@ -1,1 +1,1 @@
-"# StaticWebProjDemo" 
+## Study and Practice codes
